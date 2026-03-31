@@ -6,7 +6,7 @@ const PORT = 8000;
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Welcom to the calss room backend systen");
+  res.send("Welcome to the classroom backend API");
 });
 
 app.listen(PORT, () => {
