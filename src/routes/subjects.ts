@@ -1,4 +1,4 @@
-import { and, desc, eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, ilike, or } from "drizzle-orm";
 import { Router } from "express";
 import { departments, subjects } from "../db/schema";
 import { db } from "../db";
@@ -6,9 +6,21 @@ const router = Router();
 // Get all subects with optional search , filtering and pagination
 router.get("/", async (req, res) => {
   try {
-    const { search, department, page = 1, limit = 10 } = req.body;
-    const currentPage = Math.max(1, +page);
-    const limitPerPage = Math.max(1, +limit);
+    const search =
+      typeof req.query.search === "string"
+        ? req.query.search.trim()
+        : undefined;
+    const department =
+      typeof req.query.department === "string"
+        ? req.query.department.trim()
+        : undefined;
+    const parsePositiveInt = (value: unknown, fallback: number) => {
+      const parsed =
+        typeof value === "string" ? Number.parseInt(value, 10) : Number.NaN;
+      return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+    };
+    const currentPage = parsePositiveInt(req.query.page, 1);
+    const limitPerPage = Math.min(parsePositiveInt(req.query.limit, 10), 100);
 
     const offset = (currentPage - 1) * limitPerPage;
 
@@ -30,9 +42,7 @@ router.get("/", async (req, res) => {
     const whereClause =
       filteredConditions.length > 0 ? and(...filteredConditions) : undefined;
     const countResult = await db
-      .select({
-        count: sql<number>`count(*)`,
-      })
+      .select({ count: count() })
       .from(subjects)
       .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause);
@@ -45,7 +55,7 @@ router.get("/", async (req, res) => {
       .from(subjects)
       .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause)
-      .orderBy(desc(subjects.creadtedAt))
+      .orderBy(desc(subjects.createdAT))
       .offset(offset)
       .limit(limitPerPage);
 

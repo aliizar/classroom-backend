@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { varchar, integer, pgTable, timestamp } from "drizzle-orm/pg-core";
 const timestamps = {
-  creadtedAt: timestamp("created_at").defaultNow().notNull(),
+  createdAT: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => new Date())

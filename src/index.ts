@@ -6,6 +6,8 @@ const app = express();
 const PORT = 8000;
 
 app.use(express.json());
+if (!process.env.FRONTEND_URL)
+  throw new Error("Front end URL is not defined in environment variables");
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
