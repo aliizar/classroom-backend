@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   integer,
   jsonb,
+  uniqueIndex,
   index,
   pgEnum,
   pgTable,
@@ -16,8 +17,10 @@ type Schedule = {
   endTime: string;
 };
 const timestamps = {
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
@@ -98,7 +101,7 @@ export const enrollments = pgTable(
   (table) => ({
     studentIdIdx: index("enrollments_student_id_idx").on(table.studentId),
     classIdIdx: index("enrollments_class_id_idx").on(table.classId),
-    studentClassUnique: index("enrollments_student_class_unique").on(
+    studentClassUnique: uniqueIndex("enrollments_student_class_unique").on(
       table.studentId,
       table.classId,
     ),

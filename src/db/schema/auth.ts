@@ -22,7 +22,7 @@ export const roleEnum = pgEnum("role", ["student", "teacher", "admin"]);
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
   role: roleEnum("role").notNull().default("student"),
@@ -39,7 +39,7 @@ export const session = pgTable(
       .notNull()
       .references(() => user.id),
     token: text("token").notNull(),
-    expiresAt: timestamp("expires_at").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
 
@@ -48,7 +48,7 @@ export const session = pgTable(
   (table) => ({
     userIdIdx: index("session_user_id_idx").on(table.userId),
     tokenUnique: uniqueIndex("session_token_unique").on(table.token),
-  })
+  }),
 );
 
 export const account = pgTable(
@@ -62,8 +62,12 @@ export const account = pgTable(
     providerId: text("provider_id").notNull(),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
-    accessTokenExpiresAt: timestamp("access_token_expires_at"),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at", {
+      withTimezone: true,
+    }),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
+      withTimezone: true,
+    }),
     scope: text("scope"),
     idToken: text("id_token"),
     password: text("password"),
@@ -74,9 +78,9 @@ export const account = pgTable(
     userIdIdx: index("account_user_id_idx").on(table.userId),
     accountUnique: uniqueIndex("account_provider_account_unique").on(
       table.providerId,
-      table.accountId
+      table.accountId,
     ),
-  })
+  }),
 );
 
 export const verification = pgTable(
@@ -85,13 +89,13 @@ export const verification = pgTable(
     id: text("id").primaryKey(),
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
-    expiresAt: timestamp("expires_at").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
 
     ...timestamps,
   },
   (table) => ({
     identifierIdx: index("verification_identifier_idx").on(table.identifier),
-  })
+  }),
 );
 
 export const usersRelations = relations(user, ({ many }) => ({
