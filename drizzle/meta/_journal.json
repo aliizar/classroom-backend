@@ -15,6 +15,13 @@
       "when": 1774981362503,
       "tag": "0001_cynical_scarecrow",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776765812537,
+      "tag": "0002_dry_lionheart",
+      "breakpoints": true
     }
   ]
 }
