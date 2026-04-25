@@ -55,7 +55,7 @@ router.get("/", async (req, res) => {
       .from(subjects)
       .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause)
-      .orderBy(desc(subjects.createdAT))
+      .orderBy(desc(subjects.createdAt))
       .offset(offset)
       .limit(limitPerPage);
 
