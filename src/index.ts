@@ -2,6 +2,8 @@ import express from "express";
 import router from "./routes/subjects";
 import cors from "cors";
 import securityMiddleware from "./middleware/security";
+import { auth } from "./lib/auth";
+import { toNodeHandler } from "better-auth/node";
 const app = express();
 
 const PORT = 8000;
@@ -16,6 +18,7 @@ app.use(
     credentials: true,
   }),
 );
+app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(securityMiddleware);
 app.use("/api/subjects", router);
 app.get("/", (req, res) => {
