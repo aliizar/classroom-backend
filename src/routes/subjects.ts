@@ -1,7 +1,7 @@
 import { and, count, desc, eq, getTableColumns, ilike, or } from "drizzle-orm";
 import { Router } from "express";
-import { departments, subjects } from "../db/schema";
-import { db } from "../db";
+import { departments, subjects } from "../db/schema/index.js";
+import { db } from "../db/index.js";
 const router = Router();
 // Get all subects with optional search , filtering and pagination
 router.get("/", async (req, res) => {
